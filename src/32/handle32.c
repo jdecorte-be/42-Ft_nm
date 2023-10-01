@@ -44,27 +44,29 @@ int handle32_symtab(Elf32_Shdr *section_h, Elf32_Ehdr *elf_header, char *file_da
     if (!tab)
         return format_error("Memory allocation failed");
 
-    int tab_size = 0;
-    for (int i = 0; i < symtab_size; i++)
+    size_t tab_size = 0;
+    for (size_t i = 0; i < symtab_size; i++)
     {
         uint32_t info = ELF32_ST_TYPE(symtab[i].st_info);
         if (info == STT_FUNC || info == STT_OBJECT || info == STT_NOTYPE)
         {
             tab[tab_size].addr = read_uint32(symtab[i].st_value, file_data);
-            tab[tab_size].letter = elf32_symbols(symtab[i], section_h, file_data);
+            tab[tab_size].letter = elf32_symbols(symtab[i], section_h, file_data, elf_header);
             tab[tab_size].name = strtab + read_uint32(symtab[i].st_name, file_data);
+            tab[tab_size].shndx = read_uint32(symtab[i].st_shndx, file_data);
             tab_size++;
         }
     }
 
-    // ascii_sort(tab, tab_size);
+    ft_quicksort(tab, tab_size);
 
-    for (int i = 0; i < tab_size; i++)
+    for (int i = 1; i < tab_size; i++)
     {
-        if (tab[i].addr)
-            printf("%016lx %c", tab[i].addr, tab[i].letter);
+
+        if (tab[i].shndx != SHN_UNDEF)
+            printf("%08lx %c", tab[i].addr, tab[i].letter);
         else
-            printf("                 %c", tab[i].letter);
+            printf("         %c", tab[i].letter);
         printf(" %s\n", tab[i].name);
     }
     free(tab);
@@ -95,5 +97,5 @@ int handle32(char *file_data, Elf32_Ehdr *elf_header, struct stat fd_info)
         if (sh_type == SHT_SYMTAB)
             return handle32_symtab(section_h, elf_header, file_data, i);
     }
-    return format_error("Symbol table or string table not found");
+    return format_error("Symbol table or string table not found\n");
 }

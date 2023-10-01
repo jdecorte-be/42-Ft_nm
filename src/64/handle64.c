@@ -53,6 +53,7 @@ int handle64_symtab(Elf64_Shdr *section_h, Elf64_Ehdr *elf_header, char *file_da
             tab[tab_size].addr = read_uint64(symtab[i].st_value, file_data);
             tab[tab_size].letter = elf64_symbols(symtab[i], section_h, file_data, elf_header);
             tab[tab_size].name = strtab + read_uint64(symtab[i].st_name, file_data);
+            tab[tab_size].shndx = read_uint64(symtab[i].st_shndx, file_data);
             tab_size++;
         }
     }
@@ -61,7 +62,7 @@ int handle64_symtab(Elf64_Shdr *section_h, Elf64_Ehdr *elf_header, char *file_da
 
     for (int i = 1; i < tab_size; i++)
     {
-        if (tab[i].addr)
+        if (tab[i].shndx != SHN_UNDEF)
             printf("%016lx %c", tab[i].addr, tab[i].letter);
         else
             printf("                 %c", tab[i].letter);

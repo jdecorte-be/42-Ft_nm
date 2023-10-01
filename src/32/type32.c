@@ -1,35 +1,52 @@
 #include "../ft_nm.h"
 
-int elf32_symbols(Elf32_Sym sym, Elf32_Shdr *shdr, char *file_data)
+int elf32_symbols(Elf32_Sym sym, Elf32_Shdr *shdr, char *file_data, Elf32_Ehdr *elf_header)
 {
-  char  c;
+  char c;
   uint32_t bind = ELF32_ST_BIND(sym.st_info);
-  uint32_t type = read_uint32(shdr[read_uint16(sym.st_shndx, file_data)].sh_type, file_data);
-  uint32_t flags = read_uint32(shdr[read_uint16(sym.st_shndx, file_data)].sh_flags, file_data);
+  uint32_t shnum = read_uint32(elf_header->e_shnum, file_data);
+  uint16_t shndx = read_uint16(sym.st_shndx, file_data);
+  uint32_t type = read_uint32(shdr[shndx].sh_type, file_data);
+  uint32_t flags = read_uint32(shdr[shndx].sh_flags, file_data);
 
   if (bind == STB_GNU_UNIQUE)
     c = 'u';
   else if (bind == STB_WEAK)
-    c = (sym.st_shndx == SHN_UNDEF) ? 'w' : 'W';
+  {
+    if(bind == STT_OBJECT)
+      c = (shndx == SHN_UNDEF) ? 'v' : 'V';
+    else
+      c = (shndx == SHN_UNDEF) ? 'w' : 'W';
+  }
+  else if (bind == STB_WEAK)
+  {
+    c = 'W';
+    if (shndx == SHN_UNDEF)
+      c = 'w';
+  }
   else if (sym.st_shndx == SHN_UNDEF)
     c = 'U';
   else if (sym.st_shndx == SHN_ABS)
     c = 'A';
   else if (sym.st_shndx == SHN_COMMON)
     c = 'C';
-  else if (type == SHT_NOBITS && flags == (SHF_ALLOC | SHF_WRITE))
-    c = 'B';
-  else if ((type == SHT_PROGBITS && (flags == SHF_ALLOC || flags == (SHF_ALLOC | SHF_MERGE))) || (type == SHT_PROGBITS && flags == (SHF_ALLOC | SHF_WRITE)) || type == SHT_DYNAMIC || (bind == STB_GLOBAL && type == STT_OBJECT && sym.st_shndx == SHN_UNDEF))
-    c = (flags == (SHF_ALLOC | SHF_WRITE)) ? 'D' : 'R';
-  else if (type == SHT_PROGBITS || type == SHT_INIT_ARRAY || type == SHT_FINI_ARRAY)
-    c = 'T';
-  else
-    c = '?';
+  else if (shndx < shnum) {
+    type = read_uint32(shdr[shndx].sh_type, file_data);
+    flags = read_uint32(shdr[shndx].sh_flags, file_data);
 
+    if (type == SHT_NOBITS)
+      c = 'B';
+    else if (!(flags & SHF_WRITE))
+    {
+      if(flags & SHF_ALLOC && flags & SHF_EXECINSTR)
+        c = 'T';
+      else
+        c = 'R';
+    }
+    else
+      c = 'D';
+  }
   if (bind == STB_LOCAL && c != '?')
     c += 32;
-
   return c;
 }
-
-

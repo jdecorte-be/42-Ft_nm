@@ -9,6 +9,9 @@
 #include <sys/mman.h>
 #include <string.h>
 #include <unistd.h>
+#include <stdio.h>
+#include <errno.h>
+#include <string.h>
 
 #include "../libft/libft.h"
 
@@ -16,16 +19,17 @@ typedef struct s_sym {
 	char *name;
 	uint64_t addr;
 	unsigned char letter;
+	unsigned short shndx;
 }	t_sym;
 
 
 int elf64_symbols(Elf64_Sym sym, Elf64_Shdr *shdr, char *file_data, Elf64_Ehdr *elf_header);
-int elf32_symbols(Elf32_Sym sym, Elf32_Shdr *shdr, char *file_data);
+int elf32_symbols(Elf32_Sym sym, Elf32_Shdr *shdr, char *file_data, Elf32_Ehdr *elf_header);
 
 int handle64(char *file_data, Elf64_Ehdr *elf_header, struct stat fd_info);
 int handle32(char *file_data, Elf32_Ehdr *elf_header, struct stat fd_info);
 
-int format_error(char *msg);
+int format_error(char *msg, char *filename);
 void ft_quicksort(t_sym *tab, int len);
 
 uint64_t read_uint64(uint64_t nb, char *file);
