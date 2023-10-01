@@ -24,15 +24,6 @@ int format_check64(char *file_data, Elf64_Ehdr *elf_header, struct stat fd_info)
     return 0;
 }
 
-int nm_symbol_compare(const void* a, const void* b) {
-    const char* symbol1 = *(const char**)a;
-    const char* symbol2 = *(const char**)b;
-
-    // Compare symbols based on ASCII values
-    return strcmp(symbol1, symbol2);
-}
-
-
 int handle64_symtab(Elf64_Shdr *section_h, Elf64_Ehdr *elf_header, char *file_data, int i)
 {
     uint64_t sh_name, sh_size, sh_offset, sh_link, st_info;
@@ -66,7 +57,7 @@ int handle64_symtab(Elf64_Shdr *section_h, Elf64_Ehdr *elf_header, char *file_da
         }
     }
 
-    qsort(tab, tab_size, sizeof(t_sym), nm_symbol_compare);
+    ft_quicksort(tab, tab_size);
 
     for (int i = 1; i < tab_size; i++)
     {

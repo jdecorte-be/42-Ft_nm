@@ -26,7 +26,7 @@ int handle64(char *file_data, Elf64_Ehdr *elf_header, struct stat fd_info);
 int handle32(char *file_data, Elf32_Ehdr *elf_header, struct stat fd_info);
 
 int format_error(char *msg);
-void my_qsort(void *base, size_t num, size_t size, int (*compare)(const void*, const void*));
+void ft_quicksort(t_sym *tab, int len);
 
 uint64_t read_uint64(uint64_t nb, char *file);
 uint32_t read_uint32(uint32_t nb, char *file);
