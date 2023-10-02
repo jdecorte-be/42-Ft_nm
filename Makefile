@@ -2,8 +2,8 @@ NAME = ft_nm
 
 CC = gcc
 CFLAGS = \
-	# -g3 -fsanitize=address
-	
+	-g3 -fsanitize=address
+
 RM = rm -rf
 
 SRCS = $(wildcard src/*.c) $(wildcard src/32/*.c) $(wildcard src/64/*.c)

@@ -29,8 +29,7 @@ int handle64(char *file_data, Elf64_Ehdr *elf_header, struct stat fd_info);
 // Handle 32-bit ELF files
 int handle32(char *file_data, Elf32_Ehdr *elf_header, struct stat fd_info);
 
-// Function to format errors
-int format_error(char *msg, const char *filename);
+int str_is_nullterm(const char *start, const char *end);
 
 // Function for sort
 void mergeSort(t_sym *syms, int l, int r);

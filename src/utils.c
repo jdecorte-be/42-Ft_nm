@@ -1,7 +1,13 @@
 #include "ft_nm.h"
 
-int format_error(char *msg, const char *filename)
+int str_is_nullterm(const char *start, const char *end)
 {
-    ft_putstr_fd(msg, 2);
-    return -1;
+	while (start < end)
+	{
+		if (!*start)
+			return 1;
+		++start;
+	}
+
+	return 0;
 }
