@@ -1,27 +1,58 @@
 #include "ft_nm.h"
 
-void		ft_quicksort(t_sym *tab, int len)
+void merge(t_sym *syms, int l, int m, int r)
 {
-	char	*compa;
-	t_sym	tmp;
-	int		n;
-	int		m;
+	int i, j, k;
+	int n1 = m - l + 1;
+	int n2 = r - m;
 
-	if (len < 2)
-		return ;
-	compa = tab[(len - 1)].name;
-	m = 0;
-	n = -1;
-	while (++n < len)
-		if (strcmp(tab[n].name, compa) <= 0)
+	t_sym L[n1], R[n2];
+
+	for (i = 0; i < n1; i++)
+		L[i] = syms[l + i];
+	for (j = 0; j < n2; j++)
+		R[j] = syms[m + 1 + j];
+
+	i = 0;
+	j = 0;
+	k = l;
+	while (i < n1 && j < n2)
+	{
+		if (strcmp(L[i].name, R[j].name) <= 0)
 		{
-			if (m != n) {
-				tmp = tab[m];
-				tab[m] = tab[n];
-				tab[n] = tmp;
-			}
-			m++;
+			syms[k] = L[i];
+			i++;
 		}
-	ft_quicksort(tab, --m);
-	ft_quicksort(&tab[m], len - m);
+		else
+		{
+			syms[k] = R[j];
+			j++;
+		}
+		k++;
+	}
+
+	while (i < n1)
+	{
+		syms[k] = L[i];
+		i++;
+		k++;
+	}
+
+	while (j < n2)
+	{
+		syms[k] = R[j];
+		j++;
+		k++;
+	}
+}
+
+void mergeSort(t_sym *syms, int l, int r)
+{
+	if (l < r)
+	{
+		int m = l + (r - l) / 2;
+		mergeSort(syms, l, m);
+		mergeSort(syms, m + 1, r);
+		merge(syms, l, m, r);
+	}
 }

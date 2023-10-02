@@ -12,9 +12,11 @@ int elf64_symbols(Elf64_Sym sym, Elf64_Shdr *shdr, char *file_data, Elf64_Ehdr *
 
   if (bind == STB_GNU_UNIQUE)
     c = 'u';
+  else if(type == STT_GNU_IFUNC)
+    c = 'i';
   else if (bind == STB_WEAK)
   {
-    if(bind == STT_OBJECT)
+    if(type == STT_OBJECT)
       c = (shndx == SHN_UNDEF) ? 'v' : 'V';
     else
       c = (shndx == SHN_UNDEF) ? 'w' : 'W';
@@ -44,6 +46,8 @@ int elf64_symbols(Elf64_Sym sym, Elf64_Shdr *shdr, char *file_data, Elf64_Ehdr *
       else
         c = 'R';
     }
+    else if(flags & SHF_EXECINSTR)
+      c = 'T';
     else
       c = 'D';
   }
