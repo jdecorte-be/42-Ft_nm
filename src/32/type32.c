@@ -2,7 +2,7 @@
 
 int elf32_symbols(Elf32_Sym sym, Elf32_Shdr *shdr, char *file_data, Elf32_Ehdr *elf_header)
 {
-  char c;
+  char c = '?';
   uint32_t flags;
   uint32_t bind = ELF32_ST_BIND(sym.st_info);
   uint32_t type = ELF32_ST_TYPE(sym.st_info);

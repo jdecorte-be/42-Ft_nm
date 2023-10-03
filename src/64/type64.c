@@ -2,7 +2,7 @@
 
 int elf64_symbols(Elf64_Sym sym, Elf64_Shdr *shdr, char *file_data, Elf64_Ehdr *elf_header)
 {
-  char c;
+  char c = '?';
   uint64_t flags;
   uint64_t bind = ELF64_ST_BIND(sym.st_info);
   uint64_t type = ELF64_ST_TYPE(sym.st_info);
